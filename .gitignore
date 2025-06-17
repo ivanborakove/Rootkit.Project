@@ -1,0 +1,58 @@
+# Kernel build artifacts
+*.o
+*.ko
+*.mod.c
+*.symvers
+*.order
+*.markers
+modules.order
+Module.symvers
+Module.markers
+rootkit.ko
+rootkit.mod.c
+rootkit.o
+rootkit.ko.cmd
+rootkit.mod.o
+.rootkit*
+
+# Temporary build folders
+*.cmd
+.tmp_versions/
+*.mod
+*.mod.*
+
+# Kernel build output directories
+/Module.symvers
+/Modules.symvers
+/modules.order
+/*.tmp
+/*.cmd
+*.cmd
+
+# Generic temp and backup files
+*.log
+*.bak
+*~
+*.swp
+*.swo
+
+# cscope and ctags
+cscope.*
+tags
+
+# Editor files
+.vscode/
+.idea/
+*.user
+*.project
+*.cproject
+
+# Packaging artifacts
+*.tar
+*.tar.gz
+*.zip
+*.gz
+
+# Build output folders
+build/
+out/
