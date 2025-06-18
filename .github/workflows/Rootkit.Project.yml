@@ -19,6 +19,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential linux-headers-$(uname -r)
 
+      - name: Configure Git user.name and user.email (noreply)
+        run: |
+          git config --global user.name "Ivan Borakove"
+          git config --global user.email "ivanborakove@users.noreply.github.com"
+
       - name: Build Kernel Module
         run: |
           make
