@@ -21,7 +21,7 @@ This project is intended **strictly for controlled lab research and educational 
 | **COMMAND EXECUTOR**           | Execute arbitrary kernel commands |
 | **SELF-WATCHDOG**              | Prevents module unload by periodic refcount manipulation |
 
-## ⚙️ Kernel Version Support
+## Kernel Version Support
 
 | Tested on Kernel Versions       | Notes                          |
 |---------------------------------|-------------------------------|
@@ -128,6 +128,42 @@ make clean
 - Add **LKM initialization loader with controlled userland trigger**
 
 ## Final Note:
+name: Kernel Module Build CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential linux-headers-$(uname -r)
+
+      - name: Configure Git user.name and user.email (noreply)
+        run: |
+          git config --global user.name "Ivan Borakove"
+          git config --global user.email "ivanborakove@users.noreply.github.com"
+
+      - name: Build Kernel Module
+        run: |
+          make
+
+      - name: Verify build output
+        run: |
+          file *.ko
+
+      - name: Commit changes with standard message
+        run: |
 
 Again, **this code is for LAB TESTING ONLY**.  
 Do **not** deploy this on real systems.  
