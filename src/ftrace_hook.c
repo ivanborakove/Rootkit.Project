@@ -91,8 +91,6 @@ void fh_remove_hooks(struct fh_hook *hooks, size_t count) {
     cleanup_ftrace_regs();
 }
 
-/* ---------- IMPLEMENTAÇÃO DAS FUNÇÕES QUE ESTÃO FALTANDO ---------- */
-
 int fh_install_all(void) {
     return fh_install_hooks(fh_hooks, fh_hook_count);
 }
@@ -105,8 +103,6 @@ void fh_set_hooks(struct fh_hook *new_hooks, size_t count) {
     fh_hooks = new_hooks;
     fh_hook_count = count;
 }
-
-/* ------------------------------------------------------------------ */
 
 EXPORT_SYMBOL_GPL(fh_install_hook);
 EXPORT_SYMBOL_GPL(fh_remove_hook);

