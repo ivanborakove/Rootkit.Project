@@ -6,6 +6,7 @@
 #include <linux/delay.h>
 #include <linux/string.h>
 #include <net/sock.h>
+#include <linux/inet.h>
 #include <linux/kallsyms.h>
 
 #define CMD_BUF_SIZE 512

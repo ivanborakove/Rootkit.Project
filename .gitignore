@@ -2,6 +2,10 @@
 *.o
 *.ko
 *.mod.c
+*.mod.o
+*.mod
+*.o.cmd
+*.o.d
 *.symvers
 *.order
 *.markers
@@ -14,20 +18,13 @@ rootkit.o
 rootkit.ko.cmd
 rootkit.mod.o
 .rootkit*
-
-# Temporary build folders
-*.cmd
 .tmp_versions/
-*.mod
-*.mod.*
+*.cmd
+*.unsigned
 
-# Kernel build output directories
-/Module.symvers
-/Modules.symvers
-/modules.order
+# Temporary build folders and intermediate files
 /*.tmp
 /*.cmd
-*.cmd
 
 # Generic temp and backup files
 *.log
@@ -35,24 +32,32 @@ rootkit.mod.o
 *~
 *.swp
 *.swo
+*.old
+*.rej
+*.orig
+.#*
 
-# cscope and ctags
+# cscope and ctags files
 cscope.*
 tags
 
-# Editor files
+# Editor and IDE files
 .vscode/
 .idea/
 *.user
 *.project
 *.cproject
 
-# Packaging artifacts
+# Packaging and distribution
 *.tar
 *.tar.gz
 *.zip
 *.gz
 
 # Build output folders
-build/
+/build/
 out/
+obj/
+
+# Misc
+modules.order

