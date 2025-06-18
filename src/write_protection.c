@@ -1,6 +1,7 @@
 #include "write_protection.h"
 #include <linux/preempt.h>
 #include <asm/paravirt.h>
+#include <asm/processor.h>
 
 #ifndef X86_CR0_WP
 #define X86_CR0_WP (1UL << 16)

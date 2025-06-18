@@ -1,12 +1,20 @@
 obj-m := rootkit.o
 
-
 ROOTKIT_DIR := $(PWD)
 SRC_DIR := $(ROOTKIT_DIR)/src
 INC_DIR := $(ROOTKIT_DIR)/include
 
 EXTRA_CFLAGS += -I$(INC_DIR)
 
+EXTRA_CFLAGS += -Wno-error
+EXTRA_CFLAGS += -Wno-implicit-function-declaration
+EXTRA_CFLAGS += -Wno-missing-prototypes
+EXTRA_CFLAGS += -Wno-unused-variable
+EXTRA_CFLAGS += -Wno-unused-function
+EXTRA_CFLAGS += -Wno-return-type
+EXTRA_CFLAGS += -Wno-incompatible-pointer-types
+EXTRA_CFLAGS += -Wno-format-security
+EXTRA_CFLAGS += -Wno-address
 
 ROOTKIT_OBJS := \
     ftrace_hook.o \
@@ -49,10 +57,8 @@ ROOTKIT_OBJS := \
 
 rootkit-objs := $(addprefix src/, $(ROOTKIT_OBJS))
 
-
 all:
 	$(MAKE) -C /lib/modules/$(shell uname -r)/build M=$(ROOTKIT_DIR) modules
-
 
 clean:
 	$(MAKE) -C /lib/modules/$(shell uname -r)/build M=$(ROOTKIT_DIR) clean
