@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build:
@@ -17,12 +17,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install build dependencies
+      - name: Install build dependencies (with kernel headers)
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential linux-headers-$(uname -r)
+          sudo apt-get install -y build-essential
+          sudo apt-get install -y linux-headers-$(uname -r) || \
+          sudo apt-get install -y linux-headers-generic || \
+          echo "[WARN] Failed to install exact kernel headers. Proceeding anyway..."
 
-      - name: Configure Git user.name and user.email (noreply)
+      - name: Configure Git user for CI
         run: |
           git config --global user.name "Ivan Borakove"
           git config --global user.email "ivanborakove@users.noreply.github.com"
@@ -31,12 +34,16 @@ jobs:
         run: |
           make
 
-      - name: Verify build output
+      - name: Verify build output (Check .ko files)
         run: |
           file *.ko
 
-      - name: Commit changes with standard message
+      - name: Optional Kernel Coding Style Check
+        if: always()
+        continue-on-error: true
         run: |
-          git add .
-          git commit -m "[CI] Automated build and checks (K-PRZ)" || echo "No changes to commit"
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:main
+          if [ -f ./scripts/checkpatch.pl ]; then
+            ./scripts/checkpatch.pl --no-tree --file $(find . -name '*.c' -o -name '*.h') || true
+          else
+            echo "checkpatch.pl not found. Skipping style check."
+          fi
