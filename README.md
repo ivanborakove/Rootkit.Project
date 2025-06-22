@@ -151,8 +151,8 @@ jobs:
 
       - name: Configure Git user.name and user.email (noreply)
         run: |
-          git config --global user.name "Ivan Borakove"
-          git config --global user.email "ivanborakove@users.noreply.github.com"
+          git config --global user.name ""
+          git config --global user.email ""
 
       - name: Build Kernel Module
         run: |
